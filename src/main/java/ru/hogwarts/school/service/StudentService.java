@@ -64,7 +64,7 @@ public class StudentService {
     }
 
     public List<Student> filterByRangeAge(int minAge, int maxAge) {
-        return studentRepository.findAllByBetween(minAge, maxAge);
+        return studentRepository.findAllByAgeBetween(minAge, maxAge);
     }
     public Faculty findStudentsFaculty(long id) {
         return get(id).getFaculty();
