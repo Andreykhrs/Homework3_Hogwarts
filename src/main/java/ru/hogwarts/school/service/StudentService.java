@@ -1,5 +1,6 @@
 package ru.hogwarts.school.service;
 
+import org.hibernate.dialect.PostgreSQLDialect;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.entity.Faculty;
 import ru.hogwarts.school.exception.FacultyNotFoundException;
