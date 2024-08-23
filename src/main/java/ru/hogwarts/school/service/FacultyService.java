@@ -28,12 +28,13 @@ public class FacultyService {
         return facultyRepository.save(faculty);
     }
 
-    public void update(long id, Faculty faculty) {
+    public Faculty update(long id, Faculty faculty) {
         Faculty oldFaculty = facultyRepository.findById(id)
                 .orElseThrow(() -> new FacultyNotFoundException(id));
         oldFaculty.setName(faculty.getName());
         oldFaculty.setColor(faculty.getColor());
         facultyRepository.save(oldFaculty);
+        return faculty;
     }
 
 
@@ -41,11 +42,11 @@ public Faculty get(long id) {
     return facultyRepository.findById(id).orElseThrow(() -> new FacultyNotFoundException(id));
 }
 
-public Faculty remove(long id) {
+public void remove(long id) {
     Faculty faculty = facultyRepository.findById(id)
             .orElseThrow(() -> new FacultyNotFoundException(id));
-    facultyRepository.delete(faculty);
-    return faculty;
+    facultyRepository.deleteById(id);
+
 }
 
 public List<Faculty> filterByColor(String color) {

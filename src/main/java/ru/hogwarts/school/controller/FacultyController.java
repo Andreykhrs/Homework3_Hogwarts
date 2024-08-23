@@ -1,5 +1,6 @@
 package ru.hogwarts.school.controller;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.entity.Faculty;
 import ru.hogwarts.school.entity.Student;
@@ -22,9 +23,9 @@ public class FacultyController {
         return facultyService.create(faculty);
     }
 
-    @PutMapping("/{id}")
-    public void update(@PathVariable long id, @RequestBody Faculty faculty) {
-        facultyService.update(id, faculty);
+    @PutMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE + "; charset=utf8")
+    public Faculty update(@PathVariable long id, @RequestBody Faculty faculty) {
+        return facultyService.update(id, faculty);
     }
 
     @GetMapping("/{id}")
@@ -33,8 +34,8 @@ public class FacultyController {
     }
 
     @DeleteMapping("/{id}")
-    public Faculty remove(@PathVariable long id) {
-        return facultyService.remove(id);
+    public void remove(@PathVariable long id) {
+        facultyService.remove(id);
     }
 
     @GetMapping(params = "color")
