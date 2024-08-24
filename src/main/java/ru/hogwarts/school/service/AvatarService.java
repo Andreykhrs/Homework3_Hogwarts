@@ -1,6 +1,7 @@
 package ru.hogwarts.school.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,28 +19,38 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.StringJoiner;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class AvatarService {
 
     private final StudentRepository studentRepository;
     private final AvatarRepository avatarRepository;
-    private final Path path;
+    @Value("${application.avatars-dir-name}")
+    private String avatarsDirName;
 
-
-    public AvatarService(StudentRepository studentRepository,
-                         AvatarRepository avatarRepository,
-                         @Value("${application.avatars-dir-name}") String avatarsDirName) {
-        this.studentRepository = studentRepository;
+    public AvatarService(AvatarRepository avatarRepository,
+                         StudentRepository studentRepository) {
         this.avatarRepository = avatarRepository;
-        path = Paths.get(avatarsDirName);
+        this.studentRepository = studentRepository;
     }
+//    public AvatarService(StudentRepository studentRepository,
+//                         AvatarRepository avatarRepository,
+//                         @Value("${application.avatars-dir-name}") String avatarsDirName) {
+//        this.studentRepository = studentRepository;
+//        this.avatarRepository = avatarRepository;
+//        path = Paths.get(avatarsDirName);
+//    }
 
     @Transactional
     public void uploadAvatar(MultipartFile multipartFile, long studentId) {
         try {
+
+            Path path = Path.of(avatarsDirName);
+
 
             byte[] data = multipartFile.getBytes();
             String extension = StringUtils.getFilenameExtension(multipartFile.getOriginalFilename());
@@ -76,7 +87,12 @@ public class AvatarService {
             throw new AvatarProcessingException();
         }
 
-
     }
+
+    public List<Avatar> getAllAvatarsForPage(Integer pageNumber, Integer pageSize) {
+        PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
+        return avatarRepository.findAll(pageRequest).getContent();
+    }
+
 
 }
