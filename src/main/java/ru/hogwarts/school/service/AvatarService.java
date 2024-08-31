@@ -30,26 +30,29 @@ public class AvatarService {
     private final StudentRepository studentRepository;
     private final AvatarRepository avatarRepository;
     @Value("${application.avatars-dir-name}")
-    private String avatarsDirName;
+    // private String avatarsDirName;
 
-    public AvatarService(AvatarRepository avatarRepository,
-                         StudentRepository studentRepository) {
-        this.avatarRepository = avatarRepository;
-        this.studentRepository = studentRepository;
-    }
-//    public AvatarService(StudentRepository studentRepository,
-//                         AvatarRepository avatarRepository,
-//                         @Value("${application.avatars-dir-name}") String avatarsDirName) {
-//        this.studentRepository = studentRepository;
+    private final Path path;
+
+
+//    public AvatarService(AvatarRepository avatarRepository,
+//                         StudentRepository studentRepository) {
 //        this.avatarRepository = avatarRepository;
-//        path = Paths.get(avatarsDirName);
+//        this.studentRepository = studentRepository;
 //    }
+    public AvatarService(StudentRepository studentRepository,
+                         AvatarRepository avatarRepository,
+                         @Value("${application.avatars-dir-name}") String avatarsDirName) {
+        this.studentRepository = studentRepository;
+        this.avatarRepository = avatarRepository;
+        path = Paths.get(avatarsDirName);
+    }
 
     @Transactional
     public void uploadAvatar(MultipartFile multipartFile, long studentId) {
         try {
 
-            Path path = Path.of(avatarsDirName);
+           // Path path = Path.of(avatarsDirName);
 
 
             byte[] data = multipartFile.getBytes();
@@ -90,6 +93,9 @@ public class AvatarService {
     }
 
     public List<Avatar> getAllAvatarsForPage(Integer pageNumber, Integer pageSize) {
+        if(pageNumber==0){
+            throw new IllegalArgumentException();
+        }
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
         return avatarRepository.findAll(pageRequest).getContent();
     }

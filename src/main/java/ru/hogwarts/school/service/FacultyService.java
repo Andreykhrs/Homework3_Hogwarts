@@ -7,6 +7,7 @@ import ru.hogwarts.school.entity.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,10 +50,10 @@ public void remove(long id) {
 
 }
 
-public List<Faculty> filterByColor(String color) {
+public Collection<Faculty> filterByColor(String color) {
         return facultyRepository.findAllByColor(color);
 }
-    public List<Faculty> filterByColorOrName(String colorOrName) {
+    public Collection<Faculty> filterByColorOrName(String colorOrName) {
         return facultyRepository.findAllByColorIgnoreCaseOrNameIgnoreCase(colorOrName, colorOrName);
     }
 

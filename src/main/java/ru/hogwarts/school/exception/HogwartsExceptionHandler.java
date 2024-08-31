@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class HogwartsExceptionHandler {
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<String> handleNotFoundException(NotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    public ResponseEntity<String> handleNotFoundException() {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body("Не удалось прочитать аватарку из запроса или файла");
     }
 
     @ExceptionHandler(AvatarProcessingException.class)

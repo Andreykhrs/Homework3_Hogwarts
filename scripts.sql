@@ -10,7 +10,7 @@ SELECT * FROM students WHERE name LIKE '%o%';
 SELECT * FROM students WHERE age < id;
 SELECT * FROM students ORDER BY age;
 
-select * from faculty
-SELECT count(*) AS count FROM student
-SELECT AVG(age) AS avg FROM student
-SELECT * FROM student ORDER BY id DESC LIMIT 5
+select * from faculty;
+SELECT count(*) AS count FROM student;
+SELECT AVG(age) AS avg FROM student;
+SELECT * FROM student ORDER BY id DESC LIMIT 5;
