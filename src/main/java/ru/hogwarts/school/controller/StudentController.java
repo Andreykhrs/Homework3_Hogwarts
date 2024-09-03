@@ -112,6 +112,16 @@ public class StudentController {
         return studentService.getNumberTypeInt();
     }
 
+    @GetMapping("/print-parallel")
+    public void getNameStudentsInParallelMethod() {
+        studentService.getNameStudentsInParallelMethod();
+    }
+
+    @GetMapping("/print-synchronized")
+    public void getNameStudentsInParallelMethodWithSynchronized() {
+        studentService.getNameStudentsInParallelMethodWithSynchronized();
+    }
+
 
 
 }
