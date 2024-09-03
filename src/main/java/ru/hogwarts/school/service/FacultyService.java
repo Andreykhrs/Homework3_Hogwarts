@@ -6,6 +6,8 @@ import ru.hogwarts.school.exception.FacultyNotFoundException;
 import ru.hogwarts.school.entity.Faculty;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,6 +17,7 @@ import java.util.Map;
 @Service
 public class FacultyService {
 
+    private static final Logger logger = LoggerFactory.getLogger(FacultyService.class);
     private final FacultyRepository facultyRepository;
     private final StudentRepository studentRepository;
 
@@ -25,13 +28,17 @@ public class FacultyService {
 
 
     public Faculty create(Faculty faculty) {
+        logger.info("Was invoked method for \"createFaculty\"");
         faculty.setId(null);
         return facultyRepository.save(faculty);
     }
 
     public Faculty update(long id, Faculty faculty) {
-        Faculty oldFaculty = facultyRepository.findById(id)
-                .orElseThrow(() -> new FacultyNotFoundException(id));
+        logger.info("Was invoked method for \"updateFaculty\"");
+        Faculty oldFaculty = facultyRepository.findById(id).orElseThrow(() ->{
+            logger.error("There is not faculty with id = " + id);
+            return new FacultyNotFoundException(id);
+        });
         oldFaculty.setName(faculty.getName());
         oldFaculty.setColor(faculty.getColor());
         facultyRepository.save(oldFaculty);
@@ -40,25 +47,34 @@ public class FacultyService {
 
 
 public Faculty get(long id) {
-    return facultyRepository.findById(id).orElseThrow(() -> new FacultyNotFoundException(id));
+    logger.info("Was invoked method for \"getFaculty\"");
+    return facultyRepository.findById(id).orElseThrow(() ->{
+        logger.error("There is not faculty with id = " + id);
+        return new FacultyNotFoundException(id);
+    });
 }
 
 public void remove(long id) {
-    Faculty faculty = facultyRepository.findById(id)
-            .orElseThrow(() -> new FacultyNotFoundException(id));
-    facultyRepository.deleteById(id);
+    logger.info("Was invoked method for \"deleteFaculty\"");
+    if (!facultyRepository.existsById(id)) {
+        logger.error("There is not faculty with id = " + id);
+        throw new FacultyNotFoundException(id);
+    }
 
 }
 
 public Collection<Faculty> filterByColor(String color) {
+    logger.info("Was invoked method for \"findAllByColor\"");
         return facultyRepository.findAllByColor(color);
 }
     public Collection<Faculty> filterByColorOrName(String colorOrName) {
+        logger.info("Was invoked method for \"findByNameOrColor\"");
         return facultyRepository.findAllByColorIgnoreCaseOrNameIgnoreCase(colorOrName, colorOrName);
     }
 
 
     public List<Student> findsStudentsByFacultyId(long id) {
+        logger.info("Was invoked method for \"findStudentsByFacultyId\"");
         return studentRepository.findAllByFaculty_Id(id);
     }
 }

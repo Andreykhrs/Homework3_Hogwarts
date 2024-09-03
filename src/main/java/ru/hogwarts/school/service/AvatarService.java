@@ -13,6 +13,8 @@ import ru.hogwarts.school.exception.AvatarProcessingException;
 import ru.hogwarts.school.exception.StudentNotFoundException;
 import ru.hogwarts.school.repository.AvatarRepository;
 import ru.hogwarts.school.repository.StudentRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.IIOException;
 import java.io.IOException;
@@ -27,6 +29,7 @@ import java.util.UUID;
 @Transactional
 public class AvatarService {
 
+    private static final Logger logger = LoggerFactory.getLogger(AvatarService.class);
     private final StudentRepository studentRepository;
     private final AvatarRepository avatarRepository;
     @Value("${application.avatars-dir-name}")
@@ -50,6 +53,7 @@ public class AvatarService {
 
     @Transactional
     public void uploadAvatar(MultipartFile multipartFile, long studentId) {
+        logger.info("Was invoked method for \"uploadAvatar\"");
         try {
 
            // Path path = Path.of(avatarsDirName);
@@ -60,7 +64,10 @@ public class AvatarService {
             Path avatarPath = path.resolve(UUID.randomUUID() + "." + extension);
             Files.write(avatarPath, data);
             Student student = studentRepository.findById(studentId)
-                    .orElseThrow(() -> new StudentNotFoundException(studentId));
+                    .orElseThrow(() ->{
+                        logger.error("There is not student with id = " + studentId);
+                        return new StudentNotFoundException(studentId);
+                    });
             Avatar avatar = avatarRepository.findByStudent_Id(studentId)
                     .orElseGet(Avatar::new);
             avatar.setStudent(student);
@@ -70,30 +77,42 @@ public class AvatarService {
             avatar.setFilePath(avatarPath.toString());
             avatarRepository.save(avatar);
         } catch (IOException e) {
+            logger.error("Blowout exception \"AvatarProcessingException\"");
             throw new AvatarProcessingException();
         }
     }
 
     public Pair<byte[],String> getAvatarFromDb(long studentId) {
+        logger.info("Was invoked method for \"getAvatarFromDb\"");
         Avatar avatar = avatarRepository.findByStudent_Id(studentId)
-                .orElseThrow(()-> new StudentNotFoundException(studentId));
+                .orElseThrow(() ->{
+                    logger.error("There is not student with id = " + studentId);
+                    return new StudentNotFoundException(studentId);
+                });
         return Pair.of(avatar.getData(), avatar.getMediaType());
 
     }
 
     public Pair<byte[],String> getAvatarFromFs(long studentId) {
+        logger.info("Was invoked method for \"getAvatarFromFs\"");
         try {
             Avatar avatar = avatarRepository.findByStudent_Id(studentId)
-                    .orElseThrow(()-> new StudentNotFoundException(studentId));
+                    .orElseThrow(() ->{
+                        logger.error("There is not student with id = " + studentId);
+                        return new StudentNotFoundException(studentId);
+                    });
             return Pair.of(Files.readAllBytes(Paths.get(avatar.getFilePath())), avatar.getMediaType());
         } catch (IOException e) {
+            logger.error("Blowout exception \"AvatarProcessingException\"");
             throw new AvatarProcessingException();
         }
 
     }
 
     public List<Avatar> getAllAvatarsForPage(Integer pageNumber, Integer pageSize) {
+        logger.info("Was invoked method for \"getAllAvatarsForPage\"");
         if(pageNumber==0){
+            logger.error("Division by \"0\", in method \"getAllAvatarsForPage\"");
             throw new IllegalArgumentException();
         }
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
