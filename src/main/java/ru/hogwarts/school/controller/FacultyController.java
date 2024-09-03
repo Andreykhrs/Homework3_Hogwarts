@@ -53,6 +53,10 @@ public class FacultyController {
     public List<Student> findsStudentsByFacultyId(@PathVariable long id) {
         return facultyService.findsStudentsByFacultyId(id);
     }
+    @GetMapping("/facultyWithMaxName")
+    public String getFacultyWithMaxName() {
+        return facultyService.getFacultyWithMaxName();
+    }
 
 
 }

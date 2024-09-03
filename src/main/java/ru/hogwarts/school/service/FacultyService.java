@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Comparator;
 
 @Service
 public class FacultyService {
@@ -35,7 +36,7 @@ public class FacultyService {
 
     public Faculty update(long id, Faculty faculty) {
         logger.info("Was invoked method for \"updateFaculty\"");
-        Faculty oldFaculty = facultyRepository.findById(id).orElseThrow(() ->{
+        Faculty oldFaculty = facultyRepository.findById(id).orElseThrow(() -> {
             logger.error("There is not faculty with id = " + id);
             return new FacultyNotFoundException(id);
         });
@@ -48,7 +49,7 @@ public class FacultyService {
 
 public Faculty get(long id) {
     logger.info("Was invoked method for \"getFaculty\"");
-    return facultyRepository.findById(id).orElseThrow(() ->{
+    return facultyRepository.findById(id).orElseThrow(() -> {
         logger.error("There is not faculty with id = " + id);
         return new FacultyNotFoundException(id);
     });
@@ -76,5 +77,11 @@ public Collection<Faculty> filterByColor(String color) {
     public List<Student> findsStudentsByFacultyId(long id) {
         logger.info("Was invoked method for \"findStudentsByFacultyId\"");
         return studentRepository.findAllByFaculty_Id(id);
+    }
+
+    public String getFacultyWithMaxName() {
+        return facultyRepository.findAll().stream()
+                .map(Faculty::getName)
+                .max(Comparator.comparing(String::length)).orElseThrow();
     }
 }
